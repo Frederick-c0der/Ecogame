@@ -5,6 +5,8 @@ HEIGHT=908
 items = ["bag", "batteryimg", "chipsimg", "bottleimg"]
 Level = 1
 totallevels=5
+gameover = False
+finished=False
 actors=[]
 animations=[]
 def draw():
@@ -12,6 +14,10 @@ def draw():
     screen.blit("eco", (0,0))
     for actor in actors:
         actor.draw()
+    if gameover==True:
+        screen.draw.text("GAME OVER", (605,454), color="white")
+    if finished == True:
+        screen.draw.text("YOU WON!", (605,454), color="white")
 def createactor():
     global items
     global actors
@@ -33,11 +39,35 @@ def createactor():
     for actor in actors:
         animation=animate(actor,y = 950, duration = 5, on_finished=gameover)
         animations.append(animation)
-def gameover():
-    pass
+def nextlevel():
+    global finished
+    global Level
+    stopfunction()
+    if Level==totallevels:
+        finished=True
+    else: 
+        Level += 1
+        createactor()
+def game_over():
+    global gameover
+    gameover = True
 createactor()
+def stopfunction():
+    global animations
+    for animation in animations:
+        if animation.running:
+            animation.stop()
 def update():
-    pass
+    if gameover==True:
+        stopfunction()
+def on_mouse_down(pos):
+    global items 
+    for actor in actors:
+        if actor.collidepoint(pos):
+            if "paperimg" in actor.image:
+                nextlevel()
+            else:
+                game_over()
 
 
 pgzrun.go()
